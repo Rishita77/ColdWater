@@ -1,0 +1,4 @@
+Write a cold email to [Hiring Manager/Recruiter Name] at [Company Name] for a [Software Engineer Internship] role.  
+Mention my [relevant projects/experience], my background in [CS, cybersecurity, finance-tech], and my internship at [XYZ].  
+Show enthusiasm for their company’s work on [specific product].  
+Keep it under 150 words and end with a question to encourage a response.  

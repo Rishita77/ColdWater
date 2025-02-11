@@ -1,0 +1,7 @@
+Act as an expert cold email copywriter.  
+Write a concise, high-converting cold email for [target audience: hiring managers, recruiters, startup founders] about [user's product/service].  
+- Personalize it with [recipient's name, company, industry].  
+- Keep it under 150 words.  
+- Make the subject line engaging yet professional.  
+- Use a friendly, confident, and professional tone.  
+- End with a clear CTA.
