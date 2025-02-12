@@ -22,12 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)6w^dm+6yjbhd2f%imq+pa@zsxbud-f-=w3c5-m)!(n%&(l!nt'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -83,7 +82,9 @@ WSGI_APPLICATION = 'backend_app.wsgi.application'
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+SENDGRID_API_KEY = env("SENDGRID_API_KEY")
+SECRET_KEY = env("SECRET_KEY")
+
 
 DATABASES = {
     'default': {
@@ -152,3 +153,11 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True  # Use only for development
 # For production, specify frontend origin:
 # CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Collect static files here for production
+
+# Media files (User-uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'mediafiles'  # Collect media files here for production

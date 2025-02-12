@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include  # Import include for app-level URLs
+from django.conf import settings  # Import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Admin panel
     path('auth/', include('auth_app.urls')),  # Include auth_app routes
 ]
+
+if settings.DEBUG:  # Only serve static and media files via Django in development
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
