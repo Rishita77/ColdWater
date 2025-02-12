@@ -83,6 +83,8 @@ WSGI_APPLICATION = 'backend_app.wsgi.application'
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

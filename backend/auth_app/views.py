@@ -3,6 +3,24 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .serializers import RegisterSerializer, LoginSerializer
 from django.contrib.auth.decorators import login_required
+from backend_app.utils.email_utils import send_email
+
+def send_welcome_email(request):
+    if request.method == "POST":
+        # Example: Sending a welcome email to the registered user
+        user_email = request.POST.get('email')  # Get user's email from POST request
+        if user_email:
+            status = send_email(
+                to_email=user_email,
+                subject="Welcome to Our Platform",
+                plain_text="Thanks for joining us!",
+                html_content="<strong>Welcome! We're glad to have you on board.</strong>"
+            )
+            if status == 202:  # HTTP status 202 indicates success
+                return JsonResponse({"success": True, "message": "Email sent!"})
+            else:
+                return JsonResponse({"success": False, "message": "Failed to send email."})
+    return JsonResponse({"success": False, "message": "Invalid request."})
 
 
 @api_view(['POST'])
