@@ -1,29 +1,30 @@
-from django.conf import settings
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-
 def send_email(to_email, subject, plain_text, html_content):
     """
-    Sends an email using SendGrid API.
+    Sends an email using SendGrid.
+    
+    Parameters:
+        to_email (str or list): Recipient email(s). Can be a single email or a list of emails.
+        subject (str): Subject of the email.
+        plain_text (str): Plain text content of the email.
+        html_content (str): HTML content of the email.
+    
+    Returns:
+        int: The status code of the email send request.
     """
-    message = Mail(
-        from_email="your-email@example.com",  # Replace with your verified SendGrid email
-        to_emails=to_email,
-        subject=subject,
-        plain_text_content=plain_text,
-        html_content=html_content,
-    )
-
     try:
-        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        sg = SendGridAPIClient('your_sendgrid_api_key')  # Replace with your SendGrid API key
+        message = Mail(
+            from_email='your_email@example.com',  # Replace with your verified sender email
+            to_emails=to_email,
+            subject=subject,
+            plain_text_content=plain_text,
+            html_content=html_content
+        )
         response = sg.send(message)
-        if response.status_code == 202:  # Email sent successfully
-            print(f"Email sent successfully! Status code: {response.status_code}")
-            return response.status_code
-        else:
-            print(f"Failed to send email. Status code: {response.status_code}")
-            return None
+        return response.status_code
     except Exception as e:
-        print(f"Error sending email: {e}")
-        return None
+        print(f"Error sending email: {str(e)}")
+        return 500  # Return error status code

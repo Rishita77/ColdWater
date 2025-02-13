@@ -2,25 +2,30 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 
 
-# User Manager
 class UserManager(BaseUserManager):
+    """
+    Custom manager for User model to handle user and superuser creation.
+    """
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("Users must have an email address")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)  # Hashes the password
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+
         return self.create_user(email, password, **extra_fields)
 
 
-# Custom User Model
 class User(AbstractBaseUser):
+    """
+    Custom User model that uses email instead of username for authentication.
+    """
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
@@ -30,28 +35,37 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []  # No extra fields required during registration
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
 
 
-# Job Preferences Model
-class JobPreference(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='job_preferences')  # Links to User
-    position = models.CharField(max_length=100)  # Selected position of interest
+class EmailHistory(models.Model):
+    """
+    Model to store the history of emails sent using SendGrid.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="emails_sent")
+    position = models.CharField(max_length=255)  # Position the email is about
+    recipients = models.TextField()  # Store recipient emails as a comma-separated string
+    sent_at = models.DateTimeField(auto_now_add=True)  # Timestamp for when the email was sent
+    status = models.CharField(max_length=20, choices=[
+        ("success", "Success"),
+        ("failed", "Failed")
+    ])
+    error_details = models.TextField(blank=True, null=True)  # Store error details in case of failure
 
     def __str__(self):
-        return f"{self.user.name} - {self.position}"
+        return f"Email for {self.position} - {self.status}"
 
 
-# Uploaded Files Model
-class UploadedFiles(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_files')  # Links to User
-    csv_file = models.FileField(upload_to='uploads/csv/', null=True, blank=True)  # For email CSV uploads
-    resume_file = models.FileField(upload_to='uploads/resumes/', null=True, blank=True)  # For resume uploads
-    uploaded_at = models.DateTimeField(auto_now_add=True)  # Timestamp for uploads
+class TemporaryFile(models.Model):
+    """
+    Model to store temporary files (CSV and PDF) if needed.
+    These files will be cleaned up after processing.
+    """
+    file = models.FileField(upload_to="temp_files/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Files for {self.user.name}"
-
+        return self.file.name
